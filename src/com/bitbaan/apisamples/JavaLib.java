@@ -158,5 +158,19 @@ public class JavaLib {
     }
 
 
+    JSONObject results(String file_sha256, int scan_id)
+    {
+        JSONObject params = new JSONObject();
+        try{
+            params.put("apikey",this.api_key);
+            params.put("sha256",file_sha256);
+            params.put("scan_id",scan_id);
+            return this.call_api_with_json_input("api/v1/search/scan/results", params);
+        }catch (Exception e)
+        {
+            return unkownerror_json;
+        }
+    }
+
 
 }
