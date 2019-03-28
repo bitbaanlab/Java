@@ -231,7 +231,100 @@ public class JavaLib {
         }
     }
 
-    
+    JSONObject get_comments(String sha256){return get_comments(sha256,0,0);}
+
+    JSONObject get_comments(String sha256, int page, int per_page){
+        JSONObject params = new JSONObject();
+        try{
+            params.put("apikey",this.api_key);
+            params.put("sha256",sha256);
+            if(page!=0)
+                params.put("page", page);
+            if(per_page!=0)
+                params.put("per_page", per_page);
+            return this.call_api_with_json_input("api/v1/comment", params);
+        }catch (Exception e)
+        {
+            return unkownerror_json;
+        }
+    }
+
+    JSONObject add_comment(String sha256, String description)
+    {
+        JSONObject params = new JSONObject();
+        try{
+            params.put("apikey",this.api_key);
+            params.put("sha256",sha256);
+            params.put("description",description);
+            return this.call_api_with_json_input("api/v1/comment/add", params);
+        }catch (Exception e)
+        {
+            return unkownerror_json;
+        }
+    }
+
+    JSONObject edit_comment(int comment_id, String new_description)
+    {
+        JSONObject params = new JSONObject();
+        try{
+            params.put("apikey",this.api_key);
+            params.put("comment_id",comment_id);
+            params.put("description",new_description);
+            return this.call_api_with_json_input("api/v1/comment/edit", params);
+        }catch (Exception e)
+        {
+            return unkownerror_json;
+        }
+    }
+
+    JSONObject delete_comment(int comment_id)
+    {
+        JSONObject params = new JSONObject();
+        try{
+            params.put("apikey",this.api_key);
+            params.put("comment_id",comment_id);
+            return this.call_api_with_json_input("api/v1/comment/delete", params);
+        }catch (Exception e)
+        {
+            return unkownerror_json;
+        }
+    }
+
+    JSONObject approve_comment(int comment_id)
+    {
+        JSONObject params = new JSONObject();
+        try{
+            params.put("apikey",this.api_key);
+            params.put("comment_id",comment_id);
+            return this.call_api_with_json_input("api/v1/comment/approve", params);
+        }catch (Exception e)
+        {
+            return unkownerror_json;
+        }
+    }
+
+    JSONObject get_captcha()
+    {
+        JSONObject params = new JSONObject();
+        try{
+            return this.call_api_with_json_input("api/v1/captcha", params);
+        }catch (Exception e)
+        {
+            return unkownerror_json;
+        }
+    }
+
+    JSONObject get_av_list()
+    {
+        JSONObject params = new JSONObject();
+        try{
+            params.put("apikey",this.api_key);
+            return this.call_api_with_json_input("api/v1/search/av_list", params);
+        }catch (Exception e)
+        {
+            return unkownerror_json;
+        }
+    }
 
 
 }
