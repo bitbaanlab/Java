@@ -314,6 +314,59 @@ public class JavaLib {
         }
     }
 
+    JSONObject register(String first_name, String last_name, String username, String email, String password, String captcha)
+    {
+        JSONObject params = new JSONObject();
+        try{
+            params.put("firstname",first_name);
+            params.put("lastname",last_name);
+            params.put("username",username);
+            params.put("email",email);
+            params.put("password",password);
+            params.put("captcha",captcha);
+            return this.call_api_with_json_input("api/v1/user/register", params);
+        }catch (Exception e)
+        {
+            return unkownerror_json;
+        }
+    }
+
+    JSONObject advanced_search(){return advanced_search(0, "", "", "", "", "", "", 0, 0, 0, 0);}
+
+    JSONObject advanced_search(int scan_id, String file_name, String malware_name, String hash, String origin, String analyzed, String has_origin, int ot, int ob, int page, int per_page)
+    {
+        JSONObject params = new JSONObject();
+        try{
+            params.put("apikey",this.api_key);
+            if (scan_id != 0)
+                params.put("scan_id", scan_id);
+            if (file_name.length() != 0)
+                params.put("filename", file_name);
+            if (malware_name.length() != 0)
+                params.put("malware_name", malware_name);
+            if (hash.length() != 0)
+                params.put("hash", hash);
+            if (origin.length() != 0)
+                params.put("origin", origin);
+            if (analyzed.length() != 0)
+                params.put("analyzed", analyzed);
+            if (has_origin.length() != 0)
+                params.put("has_origin", has_origin);
+            if (ot != 0)
+                params.put("ot", ot);
+            if (ob != 0)
+                params.put("ob", ob);
+            if (page != 0)
+                params.put("page", page);
+            if (per_page != 0)
+                params.put("per_page", per_page);
+            return this.call_api_with_json_input("api/v1/search/scan/advanced", params);
+        }catch (Exception e)
+        {
+            return unkownerror_json;
+        }
+    }
+
     JSONObject get_av_list()
     {
         JSONObject params = new JSONObject();
