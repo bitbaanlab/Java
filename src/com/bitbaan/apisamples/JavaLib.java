@@ -172,5 +172,66 @@ public class JavaLib {
         }
     }
 
+    JSONObject search_by_hash(String hash){return search_by_hash(hash, 0, 0, 0, 0);}
+
+    JSONObject search_by_hash(String hash, int ot, int ob, int page, int per_page)
+    {
+        JSONObject params = new JSONObject();
+        try{
+            params.put("apikey",this.api_key);
+            params.put("hash", hash);
+            if(ot!=0)
+                params.put("ot", ot);
+            if(ob!=0)
+                params.put("ob", ob);
+            if(page!=0)
+                params.put("page", page);
+            if(per_page!=0)
+                params.put("per_page", per_page);
+            return this.call_api_with_json_input("api/v1/search/scan/hash", params);
+        }catch (Exception e)
+        {
+            return unkownerror_json;
+        }
+    }
+
+    JSONObject search_by_malware_name(String malware_name){return search_by_malware_name(malware_name, 0, 0, 0, 0);}
+
+    JSONObject search_by_malware_name(String malware_name, int ot, int ob, int page, int per_page)
+    {
+        JSONObject params = new JSONObject();
+        try{
+            params.put("apikey",this.api_key);
+            params.put("malware_name", malware_name);
+            if(ot!=0)
+                params.put("ot", ot);
+            if(ob!=0)
+                params.put("ob", ob);
+            if(page!=0)
+                params.put("page", page);
+            if(per_page!=0)
+                params.put("per_page", per_page);
+            return this.call_api_with_json_input("api/v1/search/scan/malware-name", params);
+        }catch (Exception e)
+        {
+            return unkownerror_json;
+        }
+    }
+
+    JSONObject download_file(String hash_value)
+    {
+        JSONObject params = new JSONObject();
+        try{
+            params.put("apikey",this.api_key);
+            params.put("hash",hash_value);
+            return this.call_api_with_json_input("api/v1/file/download", params);
+        }catch (Exception e)
+        {
+            return unkownerror_json;
+        }
+    }
+
+    
+
 
 }
