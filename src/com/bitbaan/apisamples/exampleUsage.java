@@ -42,59 +42,69 @@ public class exampleUsage {
         System.out.println("|  _ \\| | __|  _ \\ / _` |/ _` | '_ \\  | |\\/| | / _ \\ | |   / _` | '_ \\ ");
         System.out.println("| |_) | | |_| |_) | (_| | (_| | | | | | |  | |/ ___ \\| |__| (_| | |_) |");
         System.out.println("|____/|_|\\__|____/ \\__,_|\\__,_|_| |_| |_|  |_/_/   \\_\\_____\\__,_|_.__/ \n");
-        System.out.print("Please insert API server address [Default=https://malab.bitbaan.com]: ");
+        System.out.print("Please insert API server address [Default=https://apimalab.bitbaan.com]: ");
 
         Scanner sc=new Scanner(System.in);
         String serveraddress=sc.nextLine();
         if(serveraddress.equals(""))
-            serveraddress="https://malab.bitbaan.com";
+            serveraddress="https://apimalab.bitbaan.com";
         System.out.print("Please insert email address: ");
         String email=sc.nextLine();
         System.out.print("Please insert your password: ");
         String password=sc.nextLine();
         JavaLib malab = new JavaLib(serveraddress);
-        JSONObject returnValue = malab.login(email, password);
-        if(returnValue.getBoolean("success"))
+        JSONObject params1 = new JSONObject();
+            params1.put("email",email);
+            params1.put("password", password);
+        JSONObject return_value = malab.call_with_json_input("user/login", params1);
+        if(return_value.getBoolean("success"))
             System.out.println("You are logged in successfully.");
         else
         {
-            System.out.printf("error code %d occurred.\n", returnValue.getInt("error_code"));
+            System.out.println(malab.get_error(return_value));
             sc.close();
             return;
         }
         System.out.print("Please enter the path of file to scan: ");
         String file_path = sc.nextLine();
         File f = new File(file_path);
-        returnValue = malab.scan(file_path, f.getName());
-        if (returnValue.getBoolean("success"))
+        String file_name = f.getName();
+        String apikey = return_value.getString("apikey");
+        JSONObject params2 = new JSONObject();
+        params2.put("file_name", file_name);
+        params2.put("apikey", apikey);
+        return_value = malab.call_with_form_input("file/scan", params2, "file_data", file_path);
+        if (return_value.getBoolean("success"))
         {
             //getting scan results:
             boolean is_finished = false;
             String file_hash = malab.get_sha256(file_path);
-            int scan_id = returnValue.getInt("scan_id");
             while(!is_finished)
             {
                 System.out.println("Waiting for getting results...");
-                returnValue = malab.results(file_hash, scan_id);
-                if(!returnValue.getBoolean("success")){
-                    System.out.printf("error code %d occurred.\n", returnValue.getInt("error_code"));
+                JSONObject params3 = new JSONObject();
+                params3.put("hash", file_hash);
+                params3.put("apikey", apikey);
+                return_value = malab.call_with_json_input("file/scan/result/get", params3);
+                if(!return_value.getBoolean("success")){
+                    System.out.printf(malab.get_error(return_value));
                     return;
                 }
                 cls();
-                JSONArray results_arr = returnValue.getJSONArray("results");
-                for(int i = 0;i<results_arr.length();i++){
-                    if(results_arr.getJSONObject(i).getInt("result_state") == 32)  // file is malware
-                        System.out.printf("%s ==> %s\n", results_arr.getJSONObject(i).getString("av_name"), results_arr.getJSONObject(i).getString("virus_name"));
-                    else if (results_arr.getJSONObject(i).getInt("result_state") == 33)  // file is clean
+                JSONArray results_arr = return_value.getJSONObject("scan").getJSONArray("results");
+                for(int i = 0; i<results_arr.length(); i++){
+                    if(results_arr.getJSONObject(i).getString("result").equals("malware"))  // file is malware
+                        System.out.printf("%s ==> %s\n", results_arr.getJSONObject(i).getString("av_name"), results_arr.getJSONObject(i).getString("malware_name"));
+                    else if (results_arr.getJSONObject(i).getString("result").equals("clean"))  // file is clean
                         System.out.printf("%s ==> %s\n", results_arr.getJSONObject(i).getString("av_name"), "Clean");
                 }
-                is_finished = returnValue.getBoolean("is_finished");
+                is_finished = return_value.getJSONObject("scan").getBoolean("is_finished");
                 sleep(2000);
             }
         }
         else
         {
-            System.out.printf("error code %d occurred.\n", returnValue.getInt("error_code"));
+            System.out.printf(malab.get_error(return_value));
             sc.close();
             return;
         }
