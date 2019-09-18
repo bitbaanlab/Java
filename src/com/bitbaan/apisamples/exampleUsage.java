@@ -48,13 +48,13 @@ public class exampleUsage {
         String serveraddress=sc.nextLine();
         if(serveraddress.equals(""))
             serveraddress="https://apimalab.bitbaan.com";
-        System.out.print("Please insert email address: ");
-        String email=sc.nextLine();
+        System.out.print("Please insert identifier (username, phone no or email): ");
+        String identifier=sc.nextLine();
         System.out.print("Please insert your password: ");
         String password=sc.nextLine();
         JavaLib malab = new JavaLib(serveraddress);
         JSONObject params1 = new JSONObject();
-            params1.put("email",email);
+            params1.put("identifier", identifier);
             params1.put("password", password);
         JSONObject return_value = malab.call_with_json_input("user/login", params1);
         if(return_value.getBoolean("success"))
