@@ -48,7 +48,7 @@ public class JavaLib {
 
     public String get_error(JSONObject return_value) throws JSONException
     {
-        String error = "";
+        String error = "Error!\n";
         if (return_value.has("error_code"))
             error += ("Error code: "+ return_value.getString("error_code") + "\n");
         if (return_value.has("error_desc"))
