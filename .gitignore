@@ -1,4 +1,5 @@
 .idea
 /out
 /target
+/classes
 java.iml
